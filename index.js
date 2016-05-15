@@ -12,12 +12,12 @@ var comments = require('./routes/comments');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 
-var databaseUri = 'mongodb://localhost:27017/fashionshare';
+var databaseUri = 'mongodb://heroku_hbb8s3ld:ogcmpaobf292lmejuvc7346meq@ds023452.mlab.com:23452/heroku_hbb8s3ld';
 
 mongoose.connect(databaseUri);
 
 var api = new ParseServer({
-  databaseURI: databaseUri || 'mongodb://localhost:27017/fashionshare',
+  databaseURI: databaseUri || 'mmongodb://heroku_hbb8s3ld:ogcmpaobf292lmejuvc7346meq@ds023452.mlab.com:23452/heroku_hbb8s3ld',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'fashionshare',
   masterKey: process.env.MASTER_KEY || 'master', //Add your master key here. Keep it secret!
