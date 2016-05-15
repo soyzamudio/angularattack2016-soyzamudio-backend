@@ -4,18 +4,23 @@
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
+var mongoose = require('mongoose');
+var users = require('./routes/users');
+var posts = require('./routes/posts');
+var likes = require('./routes/likes');
+var comments = require('./routes/comments');
+var bodyParser = require('body-parser');
+var cors = require('cors')
 
-var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
+var databaseUri = 'mongodb://localhost/fashionshare';
 
-if (!databaseUri) {
-  console.log('DATABASE_URI not specified, falling back to localhost.');
-}
+mongoose.connect(databaseUri);
 
 var api = new ParseServer({
-  databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
+  databaseURI: databaseUri || 'mongodb://localhost/fashionshare',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
-  appId: process.env.APP_ID || 'myAppId',
-  masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
+  appId: process.env.APP_ID || 'fashionshare',
+  masterKey: process.env.MASTER_KEY || 'master', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',  // Don't forget to change to https if needed
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
@@ -26,29 +31,29 @@ var api = new ParseServer({
 // javascriptKey, restAPIKey, dotNetKey, clientKey
 
 var app = express();
+app.use(cors());
 
-// Serve static assets from the /public folder
-app.use('/public', express.static(path.join(__dirname, '/public')));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }))
+// parse application/json
+app.use(bodyParser.json({limit: '50mb'}))
 
 // Serve the Parse API on the /parse URL prefix
 var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
 
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
-});
-
-// There will be a test page available on the /test path of your server url
-// Remove this before launching your app
-app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname, '/public/test.html'));
-});
+app.use('/api/v1', users);
+app.use('/api/v1', posts);
+app.use('/api/v1', likes);
+app.use('/api/v1', comments);
 
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
-httpServer.listen(port, function() {
-    console.log('parse-server-example running on port ' + port + '.');
+
+mongoose.connection.once('open', function() {
+  httpServer.listen(port, function() {
+      console.log('parse-server-example running on port ' + port + '.');
+  });
 });
 
 // This will enable the Live Query real-time server

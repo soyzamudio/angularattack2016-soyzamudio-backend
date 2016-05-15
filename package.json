@@ -9,8 +9,11 @@
   },
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.1",
+    "cors": "^2.7.1",
     "express": "~4.11.x",
     "kerberos": "~0.0.x",
+    "mongoose": "^4.4.17",
     "parse": "~1.8.0",
     "parse-server": "~2.2.2"
   },
