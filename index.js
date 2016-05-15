@@ -12,12 +12,12 @@ var comments = require('./routes/comments');
 var bodyParser = require('body-parser');
 var cors = require('cors')
 
-var databaseUri = 'mongodb://localhost/fashionshare';
+var databaseUri = 'mongodb://localhost:27017/fashionshare';
 
 mongoose.connect(databaseUri);
 
 var api = new ParseServer({
-  databaseURI: databaseUri || 'mongodb://localhost/fashionshare',
+  databaseURI: databaseUri || 'mongodb://localhost:27017/fashionshare',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'fashionshare',
   masterKey: process.env.MASTER_KEY || 'master', //Add your master key here. Keep it secret!
@@ -52,7 +52,7 @@ var httpServer = require('http').createServer(app);
 
 mongoose.connection.once('open', function() {
   httpServer.listen(port, function() {
-      console.log('parse-server-example running on port ' + port + '.');
+      console.log('parse-server running on port ' + port + '.');
   });
 });
 
